@@ -37,9 +37,9 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'whoami'
                 script {
-                    def myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    // Define myimage as a global variable
+                    myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
