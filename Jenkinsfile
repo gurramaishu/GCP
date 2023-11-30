@@ -10,7 +10,7 @@ pipeline {
         LOCATION = 'us-central1-c'
         CREDENTIALS_ID = 'kubernetes'
         DOCKERHUB_USERNAME = 'aishu2000'
-        DOCKERHUB_PASSWORD = 'Aishu@2000'
+        DOCKERHUB_PASSWORD = 'aishu1122'
         IMAGE_NAME = 'helloworld'
         IMAGE_TAG = '1'
     }
