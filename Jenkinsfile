@@ -5,9 +5,9 @@ pipeline {
 	}
 	
 	environment {
-		PROJECT_ID = 'jenkins-296812'
-                CLUSTER_NAME = 'k8s-cluster'
-                LOCATION = 'us-central1-c'
+		PROJECT_ID = 'diesel-harmony-406010'
+                CLUSTER_NAME = 'k8cluster'
+                LOCATION = 'us-central1-a'
                 CREDENTIALS_ID = 'kubernetes'		
 	}
 	
