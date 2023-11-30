@@ -39,12 +39,12 @@ pipeline {
             steps {
                 sh 'whoami'
                 script {
-                    myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    def myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
 
-        stage("Push Docker Image") {
+        stage('Push Docker Image') {
             steps {
                 script {
                     echo "Push Docker Image"
@@ -67,6 +67,6 @@ pipeline {
                 step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 echo "Deployment Finished ..."
             }
-        }
-    }
+        }
+    }
 }
