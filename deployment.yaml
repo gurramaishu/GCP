@@ -1,4 +1,3 @@
----
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -17,7 +16,7 @@ spec:
   spec:
    containers:
    - name: myapp
-     image: ameintu/devops:tagversion
+     image: aishu2000/helloworld:1
      ports:
      - containerPort: 8080
 
@@ -33,4 +32,4 @@ spec:
   ports:
     - protocol: TCP
       port: 80
-      targetPort: 8080
+      targetPort: 8080
