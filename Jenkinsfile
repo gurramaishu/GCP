@@ -3,46 +3,47 @@ pipeline {
     tools {
         maven 'Maven'
     }
-
+ 
     environment {
         PROJECT_ID = 'diesel-harmony-406010'
-        CLUSTER_NAME = 'k8cluster-1'
+        CLUSTER_NAME = 'k8scluster-1'
         LOCATION = 'us-central1-a'
-        CREDENTIALS_ID = '571b31ee-87aa-4a07-bcca-2eebacc06f4d'  // Replace with your Kubernetes credential ID
+        CREDENTIALS_ID = 'kubernetes'
         DOCKERHUB_USERNAME = 'aishu2000'
         DOCKERHUB_PASSWORD = 'aishu1122'
         IMAGE_NAME = 'helloworld'
         IMAGE_TAG = '1'
     }
-
+ 
     stages {
         stage('Scm Checkout') {
             steps {
                 checkout scm
             }
         }
-
+ 
         stage('Build') {
             steps {
                 sh 'mvn clean package'
             }
         }
-
+ 
         stage('Test') {
             steps {
                 echo "Testing..."
                 sh 'mvn test'
             }
         }
-
+ 
         stage('Build Docker Image') {
             steps {
                 script {
-                    def myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    // Define myimage as a global variable
+                    myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
-
+ 
         stage('Push Docker Image') {
             steps {
                 script {
@@ -52,7 +53,7 @@ pipeline {
                 }
             }
         }
-
+ 
         stage('Deploy to K8s') {
             steps {
                 echo "Deployment started ..."
@@ -60,16 +61,13 @@ pipeline {
                 sh 'pwd'
                 sh "sed -i 's/tagversion/${IMAGE_TAG}/g' serviceLB.yaml"
                 sh "sed -i 's/tagversion/${IMAGE_TAG}/g' deployment.yaml"
-                
-                // Assuming you have the Kubernetes plugin installed
-                kubernetesDeploy(
-                    kubeconfigId: env.CREDENTIALS_ID,
-                    configs: 'serviceLB.yaml,deployment.yaml',
-                    enableConfigSubstitution: true
-                )
-                
+                echo "Start deployment of serviceLB.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'serviceLB.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                echo "Start deployment of deployment.yaml"
+                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
                 echo "Deployment Finished ..."
             }
         }
     }
 }
+ 
