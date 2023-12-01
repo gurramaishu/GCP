@@ -53,8 +53,7 @@ pipeline {
                 }
             }
         }
- 
-        stage('Deploy to K8s') {
+ stage('Deploy to K8s') {
     steps {
         echo "Deployment started ..."
         sh 'ls -ltr'
@@ -63,8 +62,8 @@ pipeline {
         sh "sed -i 's/tagversion/${IMAGE_TAG}/g' deployment.yaml"
 
         script {
-            // Update 'kubectl' to the name you configured in Jenkins (e.g., 'kubectl').
-            def kubectl = tool name: 'kubectl', type: 'kubectl'
+            // Specify the tool location explicitly
+            def kubectl = tool name: 'kubectl', type: 'kubectl', label: '', installation: 'Kubernetes CLI'
             sh "${kubectl} apply -f serviceLB.yaml"
             sh "${kubectl} apply -f deployment.yaml"
         }
