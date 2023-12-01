@@ -64,7 +64,7 @@ pipeline {
 
         script {
             // Specify the tool location explicitly
-            def kubectl = tool name: 'kubectl', type: 'kubectl', label: '', installation: 'Kubernetes CLI'
+            //def kubectl = tool name: 'kubectl', type: 'kubectl', label: '', installation: 'Kubernetes CLI'
             sh "${kubectl} apply -f serviceLB.yaml"
             sh "${kubectl} apply -f deployment.yaml"
         }
