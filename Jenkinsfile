@@ -2,6 +2,7 @@ pipeline {
     agent any
     tools {
         maven 'Maven'
+        kubernetesCli 'Kubernetes CLI'
     }
  
     environment {
