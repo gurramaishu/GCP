@@ -8,7 +8,7 @@ pipeline {
         PROJECT_ID = 'jenkins-296812'
         CLUSTER_NAME = 'k8s-cluster'
         LOCATION = 'us-central1-c'
-        CREDENTIALS_ID = 'kubernetes'
+        CREDENTIALS_ID = '571b31ee-87aa-4a07-bcca-2eebacc06f4d'  // Replace with your Kubernetes credential ID
         DOCKERHUB_USERNAME = 'aishu2000'
         DOCKERHUB_PASSWORD = 'aishu1122'
         IMAGE_NAME = 'helloworld'
@@ -38,8 +38,7 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    // Define myimage as a global variable
-                    myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
+                    def myimage = docker.build("${DOCKERHUB_USERNAME}/${IMAGE_NAME}:${IMAGE_TAG}")
                 }
             }
         }
@@ -61,10 +60,14 @@ pipeline {
                 sh 'pwd'
                 sh "sed -i 's/tagversion/${IMAGE_TAG}/g' serviceLB.yaml"
                 sh "sed -i 's/tagversion/${IMAGE_TAG}/g' deployment.yaml"
-                echo "Start deployment of serviceLB.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'serviceLB.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
-                echo "Start deployment of deployment.yaml"
-                step([$class: 'KubernetesEngineBuilder', projectId: env.PROJECT_ID, clusterName: env.CLUSTER_NAME, location: env.LOCATION, manifestPattern: 'deployment.yaml', credentialsId: env.CREDENTIALS_ID, verifyDeployments: true])
+                
+                // Assuming you have the Kubernetes plugin installed
+                kubernetesDeploy(
+                    kubeconfigId: env.CREDENTIALS_ID,
+                    configs: 'serviceLB.yaml,deployment.yaml',
+                    enableConfigSubstitution: true
+                )
+                
                 echo "Deployment Finished ..."
             }
         }
